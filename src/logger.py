@@ -1,4 +1,4 @@
-from os import getenv, makedirs
+from os import makedirs
 from os.path import join
 from datetime import datetime
 from config import Config
