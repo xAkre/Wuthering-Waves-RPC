@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/github/license/xAkre/Wuthering-Waves-RPC?style=for-the-badge)](https://github.com/xAkre/jmdict.js/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/xAkre/Wuthering-Waves-RPC?style=for-the-badge)](https://github.com/xAkre/Wuthering-Waves-RPC/blob/master/LICENSE.md)
 [![Downloads](https://img.shields.io/github/downloads/xAkre/Wuthering-Waves-RPC/total?style=for-the-badge)](https://github.com/xAkre/Wuthering-Waves-RPC/releases)
 [![PyPresence](https://img.shields.io/badge/using-pypresence-00bb88.svg?style=for-the-badge&logo=discord&logoWidth=20)](https://github.com/qwertyquerty/pypresence)
 ![Language](https://img.shields.io/github/languages/top/xAkre/Wuthering-Waves-RPC?style=for-the-badge)
@@ -23,7 +23,7 @@ Enables Discord Rich Presence for Wuthering Waves
 ## Usage
 
 1. Download the [latest release](
-    https://github.com/xAkre/Wuthering-Waves-RPC/releases/tag/Latest
+    https://github.com/xAkre/Wuthering-Waves-RPC/releases/latest
 ) 
 2. Run the executable
 
