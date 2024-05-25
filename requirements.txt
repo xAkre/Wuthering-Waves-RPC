@@ -1,0 +1,3 @@
+pypresence
+psutil
+pyinstaller
