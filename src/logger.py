@@ -1,6 +1,7 @@
 from os import getenv, makedirs
 from os.path import join
 from datetime import datetime
+from config import Config
 
 
 class Logger:
@@ -12,7 +13,7 @@ class Logger:
 
     def __init__(
         self,
-        log_folder: str = join(getenv("LOCALAPPDATA"), "WutheringWavesRPC"),
+        log_folder: str = Config.LOCAL_APP_DATA_PATH,
     ):
         """
         Create a new logger instance
