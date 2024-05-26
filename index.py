@@ -1,4 +1,1 @@
-from src.presence import Presence
-
-presence = Presence()
-presence.start()
+import src.bin.rpc

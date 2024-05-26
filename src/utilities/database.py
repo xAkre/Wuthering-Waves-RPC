@@ -1,7 +1,7 @@
 from config import Config
 from sqlite3 import Connection, connect
 from json import loads
-from src.logger import Logger
+from src.utilities import Logger
 
 
 def get_database() -> Connection:

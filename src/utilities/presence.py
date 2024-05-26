@@ -3,13 +3,13 @@ from psutil import Process, NoSuchProcess, pids
 from sqlite3 import Connection
 from pypresence import Presence as PyPresence
 from config import Config
-from src.database import (
+from src.utilities import Logger
+from src.utilities import (
     get_database,
     get_player_region,
     get_player_union_level,
     get_game_version,
 )
-from src.logger import Logger
 
 
 class Presence:

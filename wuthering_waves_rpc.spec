@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 
-a = Analysis(
+rpc = Analysis(
     ['index.py'],
     pathex=[],
     binaries=[],
@@ -14,13 +14,14 @@ a = Analysis(
     noarchive=False,
     optimize=0,
 )
-pyz = PYZ(a.pure)
+
+pyz = PYZ(rpc.pure)
 
 exe = EXE(
     pyz,
-    a.scripts,
-    a.binaries,
-    a.datas,
+    rpc.scripts,
+    rpc.binaries,
+    rpc.datas,
     [],
     uac_admin=True,
     name='Wuthering Waves RPC',
