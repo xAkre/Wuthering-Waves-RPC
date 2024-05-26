@@ -1,3 +1,4 @@
+from .assets import DiscordAssets
 from .logger import Logger
 from .database import (
     get_database,

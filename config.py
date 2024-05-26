@@ -10,7 +10,3 @@ class Config:
     """
     This is the default path to the database. I would like to make this configurable somehow
     """
-
-    class Assets:
-        LARGE_IMAGE = "logo"
-        SMALL_IMAGE = "logo"

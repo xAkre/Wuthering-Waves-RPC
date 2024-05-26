@@ -3,7 +3,7 @@ from psutil import Process, NoSuchProcess, pids
 from sqlite3 import Connection
 from pypresence import Presence as PyPresence
 from config import Config
-from src.utilities import Logger
+from src.utilities import Logger, DiscordAssets
 from src.utilities import (
     get_database,
     get_player_region,
@@ -71,9 +71,9 @@ class Presence:
             start=self.start,
             details=f"Union Level {union_level}",
             state=f"Region: {region}",
-            large_image=Config.Assets.LARGE_IMAGE,
+            large_image=DiscordAssets.LARGE_IMAGE,
             large_text="Wuthering Waves",
-            small_image=Config.Assets.SMALL_IMAGE,
+            small_image=DiscordAssets.SMALL_IMAGE,
             # For some reason quotes are automatically added around the game version, and i don't want that
             small_text=f"Version: {game_version}".replace('"', ""),
         )
