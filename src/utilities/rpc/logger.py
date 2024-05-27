@@ -1,7 +1,6 @@
 from os import makedirs
 from os.path import join
 from datetime import datetime
-from config import Config
 
 
 class Logger:
@@ -13,7 +12,7 @@ class Logger:
 
     def __init__(
         self,
-        log_folder: str = Config.LOCAL_APP_DATA_PATH,
+        log_folder: str = "logs",
     ):
         """
         Create a new logger instance

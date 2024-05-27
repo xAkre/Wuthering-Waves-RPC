@@ -1,4 +1,4 @@
-from os import getenv, path
+from os import getenv, path, makedirs
 from json import dumps
 from rich.console import Console
 from src.utilities.cli import (
@@ -11,6 +11,7 @@ from src.utilities.cli import (
     get_shortcut_preference,
     get_wuwa_install_location,
     get_startup_preference,
+    get_promote_preference,
 )
 
 console = Console()
@@ -56,9 +57,7 @@ config = {
     "wuwa_install_location": get_input(
         console,
         "Wuthering Waves Install Location",
-        lambda: get_wuwa_install_location(
-            console, DEFAULT_RICH_PRESENCE_INSTALL_LOCATION
-        ),
+        lambda: get_wuwa_install_location(console, DEFAULT_WUWA_INSTALL_LOCATION),
     ),
     "database_access_preference": get_input(
         console,
@@ -82,6 +81,11 @@ config = {
         "Create Shortcut Preference",
         lambda: get_shortcut_preference(console),
     ),
+    "promote_preference": get_input(
+        console,
+        "Promote Preference",
+        lambda: get_promote_preference(console),
+    ),
 }
 
 print_divider(console, "[green]Options Finalised[/green]", "green")
@@ -89,8 +93,12 @@ print_divider(console, "[green]Options Finalised[/green]", "green")
 # Write the config to a file
 with console.status("Writing the configuration to a file...", spinner="dots"):
     try:
+        makedirs(path.join(config["rich_presence_install_location"], "config"))
         with open(
-            path.join(config["rich_presence_install_location"], "config.json"), "w"
+            path.join(
+                config["rich_presence_install_location"], "config", "config.json"
+            ),
+            "w",
         ) as f:
             f.write(dumps(config, indent=4))
 

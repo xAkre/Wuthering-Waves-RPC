@@ -8,4 +8,5 @@ from .input import (
     get_database_access_preference,
     get_rich_presence_install_location,
     get_wuwa_install_location,
+    get_promote_preference,
 )

@@ -1,17 +1,16 @@
-from config import Config
 from sqlite3 import Connection, connect
 from json import loads
 from src.utilities.rpc import Logger
 
 
-def get_database() -> Connection:
+def get_database(path: str) -> Connection:
     """
     Get a connection to the local Wuthering Waves database
     """
     logger = Logger()
 
     try:
-        return connect(Config.LOCAL_DATABASE_PATH)
+        return connect(path)
     except Exception as e:
         logger.error(f"An error occurred while connecting to the local database: {e}")
 

@@ -203,6 +203,22 @@ def get_shortcut_preference(console: Console) -> bool:
     )
 
 
+def get_promote_preference(console: Console) -> bool:
+    """
+    Get the user's preference for promoting the rich presence on Discord
+
+    :param console: The console to use for input and output
+    :return: The user's preference for promoting the rich presence on Discord
+    """
+    return get_boolean_input(
+        console,
+        indent(
+            "Would you like to promote the rich presence on Discord?",
+            "This will add a button to the rich presence that links to the GitHub repository. (Y/N): ",
+        ),
+    )
+
+
 def get_input(console, divider_text, callback):
     """
     Get input from the user using the provided callback
