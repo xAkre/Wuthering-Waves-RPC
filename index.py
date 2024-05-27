@@ -1,1 +1,1 @@
-import src.bin.rpc
+import src.bin.setup

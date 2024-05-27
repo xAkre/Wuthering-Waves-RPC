@@ -1,5 +1,6 @@
+import sys
 from os import makedirs
-from os.path import join
+from os.path import join, dirname, abspath
 from datetime import datetime
 
 
@@ -12,12 +13,12 @@ class Logger:
 
     def __init__(
         self,
-        log_folder: str = "logs",
+        log_folder: str = join(abspath(dirname(sys.executable)), "logs"),
     ):
         """
         Create a new logger instance
 
-        :param log_file_path: The path to the log file
+        :param log_folder: The path to the log folder
         """
         makedirs(log_folder, exist_ok=True)
         self.log_folder = log_folder

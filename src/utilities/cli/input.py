@@ -131,9 +131,11 @@ def get_rich_presence_install_location(console: Console, default_location: str) 
                     return rich_presence_install_location
                 except Exception as e:
                     fatal_error(
+                        console,
                         indent(
-                            f"An error occurred while clearing the folder: {e}",
-                        )
+                            f"An error occurred while clearing the folder:",
+                        ),
+                        e,
                     )
         else:
             if rich_presence_install_location == default_location:
@@ -160,17 +162,14 @@ def get_rich_presence_install_location(console: Console, default_location: str) 
                         return rich_presence_install_location
                     except Exception as e:
                         fatal_error(
+                            console,
                             indent(
-                                f"An error occurred while creating the folder: {e}",
-                            )
+                                f"An error occurred while creating the folder",
+                            ),
+                            e,
                         )
                 else:
                     break
-
-        console.print(
-            indent("That path does not exist. Please enter a valid path."),
-            style="red",
-        )
 
 
 def get_startup_preference(console: Console) -> bool:
@@ -213,13 +212,13 @@ def get_promote_preference(console: Console) -> bool:
     return get_boolean_input(
         console,
         indent(
-            "Would you like to promote the rich presence on Discord?",
+            "Would you like to help promote the rich presence on Discord?",
             "This will add a button to the rich presence that links to the GitHub repository. (Y/N): ",
         ),
     )
 
 
-def get_input(console, divider_text, callback):
+def get_input(console, divider_text, callback) -> any:
     """
     Get input from the user using the provided callback
 

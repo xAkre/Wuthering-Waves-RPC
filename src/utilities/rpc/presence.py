@@ -47,13 +47,22 @@ class Presence:
         try:
             self.logger.clear()
 
+            while True:
+                try:
+                    self.presence.connect()
+                    break
+                except Exception as e:
+                    self.logger.info(
+                        f"Discord could not be found installed and running on this machine"
+                    )
+                    sleep(15)
+
             while not self.wuwa_process_exists():
                 self.logger.info("Wuthering Waves is not running, waiting...")
                 sleep(15)
 
-            self.logger.info("Wuthering Waves is running, starting RPC...")
+            self.logger.info("Wuthering Waves and Discord are running, starting RPC...")
             self.start = time()
-            self.presence.connect()
             self.presence.update(start=self.start)
             self.rpc_loop()
         except Exception as e:
