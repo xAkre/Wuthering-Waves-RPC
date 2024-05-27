@@ -1,4 +1,4 @@
-from src.utilities import Presence
+from src.utilities.rpc import Presence
 
 presence = Presence()
 presence.start()
