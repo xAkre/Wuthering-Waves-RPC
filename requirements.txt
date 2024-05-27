@@ -1,3 +1,5 @@
 pypresence
 psutil
 pyinstaller
+rich
+pywin32

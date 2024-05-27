@@ -1,11 +1,11 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 
-rpc = Analysis(
-    ['src/bin/rpc.py'],
+setup = Analysis(
+    ['index.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('dist/Wuthering Waves RPC.exe', '.'), ('assets/logo.ico', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -15,23 +15,23 @@ rpc = Analysis(
     optimize=0,
 )
 
-rpc_pyz = PYZ(rpc.pure)
+setup_pyz = PYZ(setup.pure)
 
-rpc_exe = EXE(
-    rpc_pyz,
-    rpc.scripts,
-    rpc.binaries,
-    rpc.datas,
+setup_exe = EXE(
+    setup_pyz,
+    setup.scripts,
+    setup.binaries,
+    setup.datas,
     [],
     uac_admin=True,
-    name='Wuthering Waves RPC',
+    name='Wuthering Waves RPC Setup',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
+    console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
@@ -39,4 +39,3 @@ rpc_exe = EXE(
     entitlements_file=None,
     icon=['assets\\logo.ico'],
 )
-
