@@ -218,6 +218,23 @@ def get_promote_preference(console: Console) -> bool:
     )
 
 
+def get_keep_running_preference(console: Console) -> bool:
+    """
+    Get the user's preference for keeping the rich presence running after Wuthering Waves is closed
+
+    :param console: The console to use for input and output
+    :return: The user's preference for keeping the rich presence running in the background
+    """
+    return get_boolean_input(
+        console,
+        indent(
+            "Would you like to keep the rich presence running in the background?",
+            "This will keep the rich presence running after Wuthering Waves is closed,",
+            "and it will wait for the next launch (Y/N): ",
+        ),
+    )
+
+
 def get_input(console, divider_text, callback) -> any:
     """
     Get input from the user using the provided callback
