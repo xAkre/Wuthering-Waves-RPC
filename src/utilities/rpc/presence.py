@@ -62,8 +62,8 @@ class Presence:
                 sleep(15)
 
             self.logger.info("Wuthering Waves and Discord are running, starting RPC...")
-            self.start = time()
-            self.presence.update(start=self.start)
+            self.start_time = time()
+            self.presence.update(start=self.start_time)
             self.rpc_loop()
         except Exception as e:
             self.logger.error(f"An uncaught error occured: {e}")
@@ -76,6 +76,15 @@ class Presence:
         while self.wuwa_process_exists():
             self.update()
             sleep(15)
+
+        if self.config["keep_running_preference"]:
+            self.presence.close()
+            while not self.wuwa_process_exists():
+                self.logger.info(
+                    "Wuthering waves has closed, waiting for it to start again..."
+                )
+                sleep(30)
+            self.start()
 
         self.logger.info("Wuthering Waves has closed, closing RPC...")
         self.presence.close()
@@ -101,7 +110,7 @@ class Presence:
         # Update the RPC with only basic information if the user doesn't want to access the database
         if self.local_database is None:
             self.presence.update(
-                start=self.start,
+                start=self.start_time,
                 details="Exploring SOL-III",
                 large_image=DiscordAssets.LARGE_IMAGE,
                 large_text="Wuthering Waves",
@@ -114,7 +123,7 @@ class Presence:
         game_version = get_game_version(self.local_database)
 
         self.presence.update(
-            start=self.start,
+            start=self.start_time,
             details=f"Union Level {union_level}",
             state=f"Region: {region}",
             large_image=DiscordAssets.LARGE_IMAGE,
