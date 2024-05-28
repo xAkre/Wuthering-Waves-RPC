@@ -17,6 +17,7 @@ from src.utilities.cli import (
     get_wuwa_install_location,
     get_startup_preference,
     get_promote_preference,
+    get_keep_running_preference,
 )
 
 console = Console()
@@ -96,6 +97,11 @@ def get_config(console: Console) -> dict:
             console,
             "Launch on Startup Preference",
             lambda: get_startup_preference(console),
+        ),
+        "keep_running_preference": get_input(
+            console,
+            "Keep Running Preference",
+            lambda: get_keep_running_preference(console),
         ),
         "shortcut_preference": get_input(
             console,
