@@ -1,11 +1,11 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 
-setup = Analysis(
-    ['index.py'],
+uninstall = Analysis(
+    ['src/bin/uninstall.py'],
     pathex=[],
     binaries=[],
-    datas=[('dist/Wuthering Waves RPC.exe', '.'), ('dist/Uninstall Wuthering Waves RPC.exe', '.'), ('assets/logo.ico', '.')],
+    datas=[],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -15,16 +15,16 @@ setup = Analysis(
     optimize=0,
 )
 
-setup_pyz = PYZ(setup.pure)
+uninstall_pyz = PYZ(uninstall.pure)
 
-setup_exe = EXE(
-    setup_pyz,
-    setup.scripts,
-    setup.binaries,
-    setup.datas,
+uninstall_exe = EXE(
+    uninstall_pyz,
+    uninstall.scripts,
+    uninstall.binaries,
+    uninstall.datas,
     [],
     uac_admin=True,
-    name='Wuthering Waves RPC Setup',
+    name='Uninstall Wuthering Waves RPC',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -39,3 +39,4 @@ setup_exe = EXE(
     entitlements_file=None,
     icon=['assets\\logo.ico'],
 )
+
