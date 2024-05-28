@@ -30,6 +30,19 @@ LARGE_DIVIDER = r"""
     / / \ \ / / \ \ / / \ \ / / \ \ / / \ \ / / \ \ / / \ \ / / 
     `-'   `-`-'   `-`-'   `-`-'   `-`-'   `-`-'   `-`-'   `-`-'      
 """
+ASCII_ART = r"""                                                                                                      
+      __        __     _   _               _             
+      \ \      / /   _| |_| |__   ___ _ __(_)_ __   __ _ 
+       \ \ /\ / / | | | __| '_ \ / _ \ '__| | '_ \ / _` |
+        \ V  V /| |_| | |_| | | |  __/ |  | | | | | (_| |
+         \_/\_/  \__,_|\__|_| |_|\___|_|  |_|_| |_|\__, |
+      __        __                     ____  ____  |___/ 
+      \ \      / /_ ___   _____  ___  |  _ \|  _ \ / ___|
+       \ \ /\ / / _` \ \ / / _ \/ __| | |_) | |_) | |    
+        \ V  V / (_| |\ V /  __/\__ \ |  _ <|  __/| |___ 
+         \_/\_/ \__,_| \_/ \___||___/ |_| \_\_|    \____| 
+                                                
+"""
 
 
 def print_welcome_message(console: Console) -> None:
@@ -41,18 +54,7 @@ def print_welcome_message(console: Console) -> None:
     console.print(
         "\n\n",
         LARGE_DIVIDER,
-        r"""                                                                                                      
-            __        __     _   _               _             
-            \ \      / /   _| |_| |__   ___ _ __(_)_ __   __ _ 
-            \ \ /\ / / | | | __| '_ \ / _ \ '__| | '_ \ / _` |
-            \ V  V /| |_| | |_| | | |  __/ |  | | | | | (_| |
-            \_/\_/  \__,_|\__|_| |_|\___|_|  |_|_| |_|\__, |
-            __        __                     ____  ____  |___/ 
-            \ \      / /_ ___   _____  ___  |  _ \|  _ \ / ___|
-            \ \ /\ / / _` \ \ / / _ \/ __| | |_) | |_) | |    
-            \ V  V / (_| |\ V /  __/\__ \ |  _ <|  __/| |___ 
-            \_/\_/ \__,_| \_/ \___||___/ |_| \_\_|    \____|                                        
-        """,
+        ASCII_ART,
         LARGE_DIVIDER,
         indent(
             "\n\n",
@@ -183,6 +185,39 @@ def copy_main_exe_to_install_location(console: Console, config: dict) -> None:
         )
 
 
+def copy_uninstall_exe_to_install_location(console: Console, config: dict) -> None:
+    """
+    Copy the uninstall executable to the install location
+
+    :param console: The console to use for output
+    :param config: The configuration options
+    """
+    try:
+        with console.status(
+            indent("Copying the uninstall executable to the install location..."),
+            spinner="dots",
+        ):
+            copyfile(
+                path.join(sys._MEIPASS, Config.UNINSTALL_EXECUTABLE_NAME),
+                path.join(
+                    config["rich_presence_install_location"],
+                    Config.UNINSTALL_EXECUTABLE_NAME,
+                ),
+            )
+            console.print(
+                indent("Uninstall executable copied to install location."),
+                style="green",
+            )
+    except Exception as e:
+        fatal_error(
+            console,
+            indent(
+                f"An error occurred while copying the uninstall executable to the install location",
+            ),
+            e,
+        )
+
+
 def add_exe_to_windows_apps(console: Console, config: dict) -> None:
     """
     Add the executable to the Windows App list
@@ -194,19 +229,39 @@ def add_exe_to_windows_apps(console: Console, config: dict) -> None:
         with console.status(
             indent("Adding the executable to the Windows App list..."), spinner="dots"
         ):
-            shortcut_path = path.join(
+            programs_folder = path.join(
                 getenv("APPDATA"),
                 "Microsoft/Windows/Start Menu/Programs",
-                "Wuthering Waves RPC.lnk",
             )
-            shortcut_target = path.join(
-                config["rich_presence_install_location"],
-                Config.MAIN_EXECUTABLE_NAME,
+
+            if not path.exists(programs_folder):
+                makedirs(programs_folder)
+
+            main_exe_shortcut_path = path.join(
+                programs_folder, Config.MAIN_EXECUTABLE_NAME.replace(".exe", ".lnk")
             )
+            main_exe_shortcut_target = path.join(
+                config["rich_presence_install_location"], Config.MAIN_EXECUTABLE_NAME
+            )
+
             shell = Dispatch("WScript.Shell")
-            shortcut = shell.CreateShortcut(shortcut_path)
-            shortcut.TargetPath = shortcut_target
+            shortcut = shell.CreateShortcut(main_exe_shortcut_path)
+            shortcut.TargetPath = main_exe_shortcut_target
             shortcut.Save()
+
+            uninstall_exe_shortcut_path = path.join(
+                programs_folder,
+                Config.UNINSTALL_EXECUTABLE_NAME.replace(".exe", ".lnk"),
+            )
+            uninstall_exe_shortcut_target = path.join(
+                config["rich_presence_install_location"],
+                Config.UNINSTALL_EXECUTABLE_NAME,
+            )
+
+            shortcut = shell.CreateShortcut(uninstall_exe_shortcut_path)
+            shortcut.TargetPath = uninstall_exe_shortcut_target
+            shortcut.Save()
+
             console.print(
                 indent("Executable added to Windows App list."), style="green"
             )
@@ -308,6 +363,7 @@ print_divider(console, "[green]Options Finalised[/green]", "green")
 create_config_folder(console, config)
 write_config_to_file(console, config)
 copy_main_exe_to_install_location(console, config)
+copy_uninstall_exe_to_install_location(console, config)
 add_exe_to_windows_apps(console, config)
 if config["startup_preference"]:
     launch_exe_on_startup(console, config)
