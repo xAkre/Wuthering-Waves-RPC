@@ -34,6 +34,11 @@ with open(config_path, "r") as f:
 
 
 def remove_startup_task(console: Console):
+    """
+    Remove the startup task that was created during installation
+
+    :param console: The console to use for input and output
+    """
     try:
         with console.status(indent("Removing the startup task..."), spinner="dots"):
             delete_task_command = [
@@ -108,6 +113,12 @@ def find_shortcuts_pointing_to_exe(exe_path: str) -> list[str]:
 
 
 def remove_shortcuts(console: Console, exe_path: str):
+    """
+    Remove shortcuts that point to a specified executable
+
+    :param console: The console to use for input and output
+    :param exe_path: The path to the executable
+    """
     shortcuts = find_shortcuts_pointing_to_exe(exe_path)
     if not shortcuts:
         console.print(
@@ -134,6 +145,11 @@ def remove_shortcuts(console: Console, exe_path: str):
 
 
 def delete_program_folder(console: Console):
+    """
+    Delete the program folder
+
+    :param console: The console to use for input and output
+    """
     try:
         for root, _, files in os.walk(abspath(dirname(sys.executable))):
             for file in files:
