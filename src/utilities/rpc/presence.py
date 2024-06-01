@@ -1,3 +1,5 @@
+import os
+import re
 from os.path import join
 from time import time, sleep
 from psutil import Process, NoSuchProcess, pids
@@ -28,13 +30,38 @@ class Presence:
         self.config = config
         self.logger = Logger()
 
-        # If the user want to access the database, get the database connection
+        # If the user wants to access the database, get the database connection
         if self.config["database_access_preference"]:
-            database_path = join(
+            database_direcory = join(
                 self.config["wuwa_install_location"],
-                "Wuthering Waves Game/Client/Saved/LocalStorage/LocalStorage.db",
+                "Wuthering Waves Game/Client/Saved/LocalStorage"
             )
-            self.local_database = get_database(database_path)
+
+            def get_highest_numbered_local_storage_file(directory):
+                pattern = re.compile(r'LocalStorage(\d*)\.db')
+                highest_number = -1
+                highest_file = None
+
+                for file in os.listdir(directory):
+                    match = pattern.match(file)
+                    if match:
+                        number = match.group(1)
+                        if number == '':
+                            number = 0
+                        else:
+                            number = int(number)
+                        if number > highest_number:
+                            highest_number = number
+                            highest_file = file
+
+                return highest_file
+
+            highest_file = get_highest_numbered_local_storage_file(database_direcory)
+            if highest_file:
+                database_path = join(database_direcory, highest_file)
+                self.local_database = get_database(database_path)
+            else:
+                self.local_database = None
         else:
             self.local_database = None
 
