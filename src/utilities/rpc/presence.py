@@ -139,19 +139,6 @@ class Presence:
         """
         self.logger.info("Updating RPC presence...")
 
-        # Check for the lastest database file
-        if self.local_database:
-            local_storage = self.get_lastest_database_file(self.database_directory)
-            self.logger.info(f"Found last modified LocalStorage file: {local_storage}")
-
-            if local_storage:
-                database_path = os.path.join(self.database_directory, local_storage)
-                try:
-                    self.local_database = get_database(database_path)
-                except self.local_database.Error as e:
-                    self.logger.error(f"Failed to connect to database: {e}")
-                    self.local_database = None
-
         # Add a button to the RPC to promote the Rich Presence if the user wants to
         buttons = (
             [
@@ -176,6 +163,18 @@ class Presence:
             return
 
         try:
+            # Check for the lastest database file
+            local_storage = self.get_lastest_database_file(self.database_directory)
+            self.logger.info(f"Found last modified LocalStorage file: {local_storage}")
+
+            if local_storage:
+                database_path = os.path.join(self.database_directory, local_storage)
+                try:
+                    self.local_database = get_database(database_path)
+                except self.local_database.Error as e:
+                    self.logger.error(f"Failed to connect to database: {e}")
+                    self.local_database = None
+
             region = get_player_region(self.local_database)
             union_level = get_player_union_level(self.local_database)
             game_version = get_game_version(self.local_database)
