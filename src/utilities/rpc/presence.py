@@ -73,7 +73,7 @@ class Presence:
                 connection = get_database(os.path.join(directory, file))
                 union_level = get_player_union_level(connection)
 
-                if union_level is "Unknown":
+                if union_level == "Unknown":
                     continue
 
                 if int(union_level) > highest_union_level:
