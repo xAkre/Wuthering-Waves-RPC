@@ -7,9 +7,14 @@ from psutil import NoSuchProcess, Process, pids
 from pypresence import Presence as PyPresence
 
 from config import Config
-from src.utilities.rpc import (DiscordAssets, Logger, get_database,
-                               get_game_version, get_player_region,
-                               get_player_union_level)
+from src.utilities.rpc import (
+    DiscordAssets,
+    Logger,
+    get_database,
+    get_game_version,
+    get_player_region,
+    get_player_union_level,
+)
 
 
 class Presence:
@@ -28,12 +33,12 @@ class Presence:
 
         self.database_directory = os.path.join(
             self.config["wuwa_install_location"],
-            "Wuthering Waves Game/Client/Saved/LocalStorage"
+            "Wuthering Waves Game/Client/Saved/LocalStorage",
         )
 
         # If the user wants to access the database, get the database connection
         if self.config["database_access_preference"]:
-            local_storage = self.get_last_modified_file(self.database_directory)
+            local_storage = self.get_lastest_database_file(self.database_directory)
             self.logger.info(f"Found last modified LocalStorage file: {local_storage}")
             if local_storage:
                 database_path = os.path.join(self.database_directory, local_storage)
@@ -45,27 +50,38 @@ class Presence:
 
         self.presence = PyPresence(Config.APPLICATION_ID)
 
-    def get_last_modified_file(self, directory):
+    def get_lastest_database_file(self, directory: str):
         """
-        Returns the name of the last modified file with a '.db' extension
+        Returns the name of the lastest database file with a '.db' extension
         in the specified directory.
-        Args:
-            directory (str): The directory to search for the last modified file.
-        Returns:
-            str: The name of the last modified file, or None if no matching file is found.
+
+        :param directory: The directory to search for the lastest file
+        :return: The name of the lastest file, or None if no matching file is found
         """
-        pattern = re.compile(r'.*\.db$')
-        latest_mtime = -1
+        pattern = re.compile(r".*\.db$")
+        highest_union_level = -1
         latest_file = None
 
-        self.logger.info(f"Looking for the last modified LocalStorage file in {directory}")
+        self.logger.info(f"Looking for the lastest LocalStorage file in {directory}")
         for file in os.listdir(directory):
+            if latest_file is None:
+                latest_file = file
+
             if pattern.match(file):
-                file_path = os.path.join(directory, file)
-                mtime = os.path.getmtime(file_path)
-                if mtime > latest_mtime:
-                    latest_mtime = mtime
+                self.logger.info(f"Found LocalStorage file: {file}")
+
+                connection = get_database(os.path.join(directory, file))
+                union_level = get_player_union_level(connection)
+
+                if union_level is "Unknown":
+                    continue
+
+                if int(union_level) > highest_union_level:
+                    highest_union_level = int(union_level)
                     latest_file = file
+
+                connection.close()
+
         return latest_file
 
     def start(self) -> None:
@@ -123,16 +139,18 @@ class Presence:
         """
         self.logger.info("Updating RPC presence...")
 
-        # Check for the last modified database file
-        local_storage = self.get_last_modified_file(self.database_directory)
-        self.logger.info(f"Found last modified LocalStorage file: {local_storage}")
-        if local_storage:
-            database_path = os.path.join(self.database_directory, local_storage)
-            try:
-                self.local_database = get_database(database_path)
-            except self.local_database.Error as e:
-                self.logger.error(f"Failed to connect to database: {e}")
-                self.local_database = None
+        # Check for the lastest database file
+        if self.local_database:
+            local_storage = self.get_lastest_database_file(self.database_directory)
+            self.logger.info(f"Found last modified LocalStorage file: {local_storage}")
+
+            if local_storage:
+                database_path = os.path.join(self.database_directory, local_storage)
+                try:
+                    self.local_database = get_database(database_path)
+                except self.local_database.Error as e:
+                    self.logger.error(f"Failed to connect to database: {e}")
+                    self.local_database = None
 
         # Add a button to the RPC to promote the Rich Presence if the user wants to
         buttons = (
