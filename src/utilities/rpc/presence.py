@@ -1,16 +1,19 @@
-from os.path import join
-from time import time, sleep
-from psutil import Process, NoSuchProcess, pids
+import os
+import re
 from sqlite3 import Connection
+from time import sleep, time
+
+from psutil import NoSuchProcess, Process, pids
 from pypresence import Presence as PyPresence
+
 from config import Config
 from src.utilities.rpc import (
-    get_database,
-    get_player_region,
-    get_player_union_level,
-    get_game_version,
     DiscordAssets,
     Logger,
+    get_database,
+    get_game_version,
+    get_player_region,
+    get_player_union_level,
 )
 
 
@@ -28,17 +31,58 @@ class Presence:
         self.config = config
         self.logger = Logger()
 
-        # If the user want to access the database, get the database connection
+        self.database_directory = os.path.join(
+            self.config["wuwa_install_location"],
+            "Wuthering Waves Game/Client/Saved/LocalStorage",
+        )
+
+        # If the user wants to access the database, get the database connection
         if self.config["database_access_preference"]:
-            database_path = join(
-                self.config["wuwa_install_location"],
-                "Wuthering Waves Game/Client/Saved/LocalStorage/LocalStorage.db",
-            )
-            self.local_database = get_database(database_path)
+            local_storage = self.get_lastest_database_file(self.database_directory)
+            self.logger.info(f"Found last modified LocalStorage file: {local_storage}")
+            if local_storage:
+                database_path = os.path.join(self.database_directory, local_storage)
+                self.local_database = get_database(database_path)
+            else:
+                self.local_database = None
         else:
             self.local_database = None
 
         self.presence = PyPresence(Config.APPLICATION_ID)
+
+    def get_lastest_database_file(self, directory: str):
+        """
+        Returns the name of the lastest database file with a '.db' extension
+        in the specified directory.
+
+        :param directory: The directory to search for the lastest file
+        :return: The name of the lastest file, or None if no matching file is found
+        """
+        pattern = re.compile(r".*\.db$")
+        highest_union_level = -1
+        latest_file = None
+
+        self.logger.info(f"Looking for the lastest LocalStorage file in {directory}")
+        for file in os.listdir(directory):
+            if latest_file is None:
+                latest_file = file
+
+            if pattern.match(file):
+                self.logger.info(f"Found LocalStorage file: {file}")
+
+                connection = get_database(os.path.join(directory, file))
+                union_level = get_player_union_level(connection)
+
+                if union_level is "Unknown":
+                    continue
+
+                if int(union_level) > highest_union_level:
+                    highest_union_level = int(union_level)
+                    latest_file = file
+
+                connection.close()
+
+        return latest_file
 
     def start(self) -> None:
         """
@@ -95,6 +139,19 @@ class Presence:
         """
         self.logger.info("Updating RPC presence...")
 
+        # Check for the lastest database file
+        if self.local_database:
+            local_storage = self.get_lastest_database_file(self.database_directory)
+            self.logger.info(f"Found last modified LocalStorage file: {local_storage}")
+
+            if local_storage:
+                database_path = os.path.join(self.database_directory, local_storage)
+                try:
+                    self.local_database = get_database(database_path)
+                except self.local_database.Error as e:
+                    self.logger.error(f"Failed to connect to database: {e}")
+                    self.local_database = None
+
         # Add a button to the RPC to promote the Rich Presence if the user wants to
         buttons = (
             [
@@ -118,9 +175,15 @@ class Presence:
             )
             return
 
-        region = get_player_region(self.local_database)
-        union_level = get_player_union_level(self.local_database)
-        game_version = get_game_version(self.local_database)
+        try:
+            region = get_player_region(self.local_database)
+            union_level = get_player_union_level(self.local_database)
+            game_version = get_game_version(self.local_database)
+        except self.local_database.Error as e:
+            self.logger.error(f"Failed to retrieve game data: {e}")
+            region = "Unknown"
+            union_level = "Unknown"
+            game_version = "Unknown"
 
         self.presence.update(
             start=self.start_time,
