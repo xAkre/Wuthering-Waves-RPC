@@ -18,6 +18,7 @@ from src.utilities.cli import (
     get_startup_preference,
     get_promote_preference,
     get_keep_running_preference,
+    get_kuro_games_uid,
 )
 
 console = Console()
@@ -75,17 +76,27 @@ def get_config(console: Console) -> dict:
 
     :param console: The console to use for input and output
     """
-    return {
-        "wuwa_install_location": get_input(
+    wuwa_install_location = get_input(
+        console,
+        "Wuthering Waves Install Location",
+        lambda: get_wuwa_install_location(console, DEFAULT_WUWA_INSTALL_LOCATION),
+    )
+    database_access_preference = get_input(
+        console,
+        "Database Access Preference",
+        lambda: get_database_access_preference(console),
+    )
+
+    if database_access_preference:
+        kuro_games_uid = get_input(
             console,
-            "Wuthering Waves Install Location",
-            lambda: get_wuwa_install_location(console, DEFAULT_WUWA_INSTALL_LOCATION),
-        ),
-        "database_access_preference": get_input(
-            console,
-            "Database Access Preference",
-            lambda: get_database_access_preference(console),
-        ),
+            "Kuro Games UID",
+            lambda: get_kuro_games_uid(console),
+        )
+
+    config = {
+        "wuwa_install_location": wuwa_install_location,
+        "database_access_preference": database_access_preference,
         "rich_presence_install_location": get_input(
             console,
             "Rich Presence Install Location",
@@ -114,6 +125,11 @@ def get_config(console: Console) -> dict:
             lambda: get_promote_preference(console),
         ),
     }
+
+    if database_access_preference:
+        config["kuro_games_uid"] = kuro_games_uid
+
+    return config
 
 
 def create_config_folder(console: Console, config: dict) -> None:
