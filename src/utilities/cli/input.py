@@ -1,3 +1,4 @@
+import re
 from os import path, listdir, makedirs
 from shutil import rmtree
 from rich.console import Console
@@ -233,6 +234,33 @@ def get_keep_running_preference(console: Console) -> bool:
             "and it will wait for the next launch (Y/N): ",
         ),
     )
+
+
+def get_kuro_games_uid(console: Console) -> str:
+    """
+    Get the Kuro Games UID the user wants to check for
+
+    :param console: The console to use for input and output
+    :return: The Kuro Games UID the user wants to check for
+    """
+    while True:
+        kuro_games_uid_regex = re.compile(r"^\d+$")
+        user_input = console.input(
+            indent(
+                "Please enter the Kuro Games UID you would like the RPC to check for.",
+                "Note that this is not the UID you see in the bottom right corner of the game.",
+                "To get this UID, go to the game's settings and click on the 'Account' tab,",
+                "then go into the 'User Center' section, and you will see the UID there: ",
+            )
+        ).strip()
+
+        if user_input and kuro_games_uid_regex.match(user_input):
+            return user_input
+        else:
+            console.print(
+                indent("\n", "The Kuro Games UID must only contain numbers", "\n"),
+                style="red",
+            )
 
 
 def get_input(console, divider_text, callback) -> any:

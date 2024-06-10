@@ -71,7 +71,9 @@ class Presence:
                 self.logger.info(f"Found LocalStorage file: {file}")
 
                 connection = get_database(os.path.join(directory, file))
-                union_level = get_player_union_level(connection)
+                union_level = get_player_union_level(
+                    connection, self.config["kuro_games_uid"]
+                )
 
                 if union_level == "Unknown":
                     continue
@@ -175,8 +177,12 @@ class Presence:
                     self.logger.error(f"Failed to connect to database: {e}")
                     self.local_database = None
 
-            region = get_player_region(self.local_database)
-            union_level = get_player_union_level(self.local_database)
+            region = get_player_region(
+                self.local_database, self.config["kuro_games_uid"]
+            )
+            union_level = get_player_union_level(
+                self.local_database, self.config["kuro_games_uid"]
+            )
             game_version = get_game_version(self.local_database)
         except self.local_database.Error as e:
             self.logger.error(f"Failed to retrieve game data: {e}")

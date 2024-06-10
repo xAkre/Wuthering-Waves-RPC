@@ -10,4 +10,5 @@ from .input import (
     get_wuwa_install_location,
     get_promote_preference,
     get_keep_running_preference,
+    get_kuro_games_uid,
 )
