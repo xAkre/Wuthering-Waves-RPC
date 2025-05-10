@@ -27,6 +27,20 @@ def get_boolean_input(console: Console, prompt: str) -> bool:
             )
 
 
+def get_using_steam_version(console: Console) -> bool:
+    """
+    Prompt the user as to whether they use the steam version of the game.
+
+    :param console: The console to use for input and output
+    :return: Whether the user is using the steam version of the game
+    """
+
+    return get_boolean_input(
+        console,
+        indent("Are you using the steam version of the game (Y/N): "),
+    )
+
+
 def get_wuwa_install_location(console: Console, default_location: str) -> str:
     """
     Get the Wuthering Waves install location from the user

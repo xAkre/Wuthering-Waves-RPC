@@ -23,6 +23,7 @@ class Presence:
     """
     Local Wuthering Waves database connection. The database is a sqlite database and 
     is stored inside the Wuthering Waves game folder at 
+    "{Game Folder}/Client/Saved/LocalStorage" if using the steam version else 
     "{Game Folder}/Wuthering Waves Game/Client/Saved/LocalStorage"
     """
     presence: PyPresence
@@ -33,7 +34,9 @@ class Presence:
 
         self.database_directory = os.path.join(
             self.config["wuwa_install_location"],
-            "Wuthering Waves Game/Client/Saved/LocalStorage",
+            "Client/Saved/LocalStorage"
+            if self.config["using_steam_version"]
+            else "Wuthering Waves Game/Client/Saved/LocalStorage",
         )
 
         # If the user wants to access the database, get the database connection

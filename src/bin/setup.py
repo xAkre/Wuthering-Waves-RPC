@@ -16,6 +16,7 @@ from src.utilities.cli import (
     get_shortcut_preference,
     get_wuwa_install_location,
     get_startup_preference,
+    get_using_steam_version,
     get_promote_preference,
     get_keep_running_preference,
     get_kuro_games_uid,
@@ -76,6 +77,9 @@ def get_config(console: Console) -> dict:
 
     :param console: The console to use for input and output
     """
+    using_steam_version = get_input(
+        console, "Steam Version", lambda: get_using_steam_version(console)
+    )
     wuwa_install_location = get_input(
         console,
         "Wuthering Waves Install Location",
@@ -95,6 +99,7 @@ def get_config(console: Console) -> dict:
         )
 
     config = {
+        "using_steam_version": using_steam_version,
         "wuwa_install_location": wuwa_install_location,
         "database_access_preference": database_access_preference,
         "rich_presence_install_location": get_input(
